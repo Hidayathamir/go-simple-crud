@@ -2,17 +2,18 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"gopkg.in/validator.v2"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 type User struct {
 	gorm.Model `json:"-"`
-	Username   string `json:"username" gorm:"unique"`
-	Password   string `json:"password"`
+	Username   string `json:"username" gorm:"not null;unique" validate:"min=8"`
+	Password   string `json:"password" gorm:"not null" validate:"min=8"`
 }
 
-var db *gorm.DB = getDB("user")
+var db *gorm.DB = getDB("user.db")
 
 func main() {
 	router := getRouter()
@@ -50,6 +51,12 @@ func putUserHandler(c *gin.Context) {
 	}
 	if reqBody.Password != "" {
 		user.Password = reqBody.Password
+	}
+	if err := validator.Validate(user); err != nil {
+		c.JSON(400, gin.H{
+			"message": err.Error(),
+		})
+		return
 	}
 	if result := db.Save(&user); result.Error != nil {
 		c.JSON(400, gin.H{
@@ -89,6 +96,12 @@ func getUserHandler(c *gin.Context) {
 func postUsersHandler(c *gin.Context) {
 	var user User
 	if err := c.BindJSON(&user); err != nil {
+		c.JSON(400, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	if err := validator.Validate(user); err != nil {
 		c.JSON(400, gin.H{
 			"message": err.Error(),
 		})
