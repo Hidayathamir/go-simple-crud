@@ -3,13 +3,12 @@
 Simple crud gin gorm.
 
 ```
-git clone https://github.com/Hidayathamir/go-simple-crud.git
+git clone -b postgresql https://github.com/Hidayathamir/go-simple-crud.git
 cd go-simple-crud
-go run main.go
 ```
 
-## Another database
+Edit `var dsn = "..."` in `main.go` with your value.
 
-[postgresql][1]
-
-[1]: https://github.com/Hidayathamir/go-simple-crud/tree/postgresql
+```
+go run main.go
+```

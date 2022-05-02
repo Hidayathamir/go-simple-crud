@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"gopkg.in/validator.v2"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +13,8 @@ type User struct {
 	Password   string `json:"password" gorm:"not null" validate:"min=8"`
 }
 
-var db *gorm.DB = getDB("user.db")
+var dsn = "host=localhost user=yourUser password=yourPass dbname=yourDBName port=5432 sslmode=disable TimeZone=Asia/Makassar"
+var db *gorm.DB = getDB(dsn)
 
 func main() {
 	router := getRouter()
@@ -128,7 +129,7 @@ func getUsersHandler(c *gin.Context) {
 }
 
 func getDB(dbName string) *gorm.DB {
-	db, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dbName), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
